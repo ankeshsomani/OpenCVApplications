@@ -46,7 +46,7 @@ public class Application{
 	static Mat actualFrame,backgroundSubtractedFrame;
 	static List<MatOfPoint> contours ;
 	static String videoFilePath="CarsDrivingUnderBridge.mp4";
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		actualFrame = new Mat();
 
 		capture = new VideoCapture();
@@ -103,7 +103,7 @@ public class Application{
 		
 	}
 
-	protected static void startProcessing() {
+	protected static void startProcessing() throws Exception {
 
 		//Do background removal
 		mBGSub.apply(actualFrame, backgroundSubtractedFrame, 0.01);
@@ -230,7 +230,7 @@ public class Application{
 		
 	}
 
-	private static void matchCurrentFrameBlobsToExistingBlobs() {
+	private static void matchCurrentFrameBlobsToExistingBlobs() throws Exception {
 
 		for (Blob existingBlob : existingBlobs) {
 			existingBlob.blnCurrentMatchFoundOrNewBlob = false;
