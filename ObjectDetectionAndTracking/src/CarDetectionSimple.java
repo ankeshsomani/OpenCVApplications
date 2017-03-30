@@ -20,7 +20,7 @@ import org.opencv.videoio.VideoCapture;
  * @author ankeshs
  */
 
-public class Application{
+public class CarDetectionSimple{
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
@@ -29,8 +29,8 @@ public class Application{
 	static MyFrame origVideoFrame = new MyFrame("CAR VIDEO", 0, 0);
 	//static MyFrame backgroundSubtractedFrame = new MyFrame("BACKGROUND SUBTRACTION",
 	//		Toolkit.getDefaultToolkit().getScreenSize().width / 3, 500);
-	static MyFrame convexHullsFrame = new MyFrame("CONVEX UHLLS",
-			Toolkit.getDefaultToolkit().getScreenSize().width / 2 + 10, 500);
+	//static MyFrame convexHullsFrame = new MyFrame("CONVEX UHLLS",
+	//		Toolkit.getDefaultToolkit().getScreenSize().width / 2 + 10, 500);
 	//static MyFrame trackedBlobsFrame = new MyFrame("TRACKED BLOBS",
 	//		Toolkit.getDefaultToolkit().getScreenSize().width / 4 + 10, 500);
 	static boolean firstFrame;
@@ -66,7 +66,7 @@ public class Application{
 		initializeCrossingLine();
 		origVideoFrame.setFrameSize(JMAX + 17, IMAX + 40);
 		//backgroundSubtractedFrame.setFrameSize(JMAX + 17, IMAX + 40);
-		convexHullsFrame.setFrameSize(JMAX + 17, IMAX + 40);
+	//	convexHullsFrame.setFrameSize(JMAX + 17, IMAX + 40);
 		//trackedBlobsFrame.setFrameSize(JMAX + 17, IMAX + 40);
 		Mat outbox = new Mat();
 		backgroundSubtractedFrame = new Mat(outbox.size(), CvType.CV_8UC1);
@@ -144,7 +144,7 @@ public class Application{
 		
 		//check if tracked objects crossed the line
 		if(blobsCrossedTheLine()){
-			System.out.println("car crossed");
+			//System.out.println("car crossed");
 			
 			Imgproc.line(sourceCopy, crossingLine[0], crossingLine[1], Constants.SCALAR_GREEN, 2);
 		}
@@ -183,8 +183,8 @@ public class Application{
 			for (int i = 0; i < convexHulls.size(); i++) {
 				MatOfPoint hull = convertIndexesToPoints(contours.get(i), convexHulls.get(i));
 				convexHullsPoint.add(hull);
-				Blob possibleBlob = new Blob(hull,myCount);
-				myCount++;
+				Blob possibleBlob = new Blob(hull);
+				
 				if (possibleBlob.boundingRect.area() > 100 && possibleBlob.dblAspectRatio >= 0.2
 						&& possibleBlob.dblAspectRatio <= 1.2 && possibleBlob.boundingRect.width > 15
 						&& possibleBlob.boundingRect.height > 20 && possibleBlob.dblDiagonalSize > 30.0) {
@@ -201,7 +201,7 @@ public class Application{
 		}
 
 		Imgproc.drawContours(imgConvexHulls, convexHullsPoint, -1, Constants.SCALAR_WHITE, -1);
-		convexHullsFrame.paintFrame(imgConvexHulls);
+		//convexHullsFrame.paintFrame(imgConvexHulls);
 		
 	}
 
@@ -285,7 +285,7 @@ public class Application{
 
 	static void addBlobToExistingBlobs(Blob currentFrameBlob, int intIndex) {
 
-		System.out.println("here in addBlobToExistingBlobs");
+		//System.out.println("here in addBlobToExistingBlobs");
 		existingBlobs.get(intIndex).contours = currentFrameBlob.contours;
 		existingBlobs.get(intIndex).boundingRect = currentFrameBlob.boundingRect;
 
@@ -301,7 +301,8 @@ public class Application{
 	}
 
 	static void addNewBlob(Blob currentFrameBlob) {
-
+		myCount++;
+		currentFrameBlob.myId=myCount;
 		currentFrameBlob.blnCurrentMatchFoundOrNewBlob = true;
 		existingBlobs.add(currentFrameBlob);
 	}
@@ -354,7 +355,7 @@ public class Application{
 		boolean blnAtLeastOneBlobCrossedTheLine = false;
 
 		for (Blob blob : existingBlobs) {
-			System.out.println("m here "+(blob.blnStillBeingTracked) +"***"+(blob.centerPositions.size()));
+			//System.out.println("m here "+(blob.blnStillBeingTracked) +"***"+(blob.centerPositions.size()));
 			if (blob.blnStillBeingTracked == true && blob.centerPositions.size() >= 2) {
 				int prevFrameIndex = (int) blob.centerPositions.size() - 2;
 				int currFrameIndex = (int) blob.centerPositions.size() - 1;
@@ -386,7 +387,7 @@ public class Application{
 				double dblFontScale = existingBlobs.get(i).dblDiagonalSize / 60.0;
 				int intFontThickness = (int) Math.round(dblFontScale * 1.0);
 
-				Imgproc.putText(imgFrame2Copy, Integer.toString(i),
+				Imgproc.putText(imgFrame2Copy, Integer.toString(existingBlobs.get(i).myId),
 						existingBlobs.get(i).centerPositions.get(existingBlobs.get(i).centerPositions.size() - 1), intFontFace,
 						dblFontScale, Constants.SCALAR_GREEN, intFontThickness);
 			}
