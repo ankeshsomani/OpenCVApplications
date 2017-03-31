@@ -143,7 +143,7 @@ public class CarDetectionSimple{
 		
 		
 		//check if tracked objects crossed the line
-		if(blobsCrossedTheLine()){
+		if(blobsCrossedTheLine()){	
 			//System.out.println("car crossed");
 			
 			Imgproc.line(sourceCopy, crossingLine[0], crossingLine[1], Constants.SCALAR_GREEN, 2);
@@ -185,9 +185,11 @@ public class CarDetectionSimple{
 				convexHullsPoint.add(hull);
 				Blob possibleBlob = new Blob(hull);
 				
-				if (possibleBlob.boundingRect.area() > 100 && possibleBlob.dblAspectRatio >= 0.2
-						&& possibleBlob.dblAspectRatio <= 1.2 && possibleBlob.boundingRect.width > 15
-						&& possibleBlob.boundingRect.height > 20 && possibleBlob.dblDiagonalSize > 30.0) {
+				if (possibleBlob.boundingRect.area() > 400 && possibleBlob.dblAspectRatio > 0.2
+						&& possibleBlob.dblAspectRatio < 4.0 && possibleBlob.boundingRect.width > 30
+						&& possibleBlob.boundingRect.height > 30 && possibleBlob.dblDiagonalSize > 60.0
+						&& (Imgproc.contourArea(possibleBlob.contours)/(possibleBlob.boundingRect.area())>0.50)
+						) {
 					
 					currentFrameBlobs.add(possibleBlob);
 				}
